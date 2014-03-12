@@ -42,7 +42,7 @@ module.exports = function(grunt) {
       grunt.fail.fatal('runner is undefined');
     }
 
-    settings.path = [settings.path];
+    settings.path = grunt.util.toArray(settings.path);
 
     var done = this.async();
 
@@ -53,6 +53,7 @@ module.exports = function(grunt) {
     var errorCount = 0;
 
     function processPath(dir, callback) {
+      grunt.log.subhead('Processing path [' + dir + ']');
       var url = runner.getUrl(settings.url, dir);
       if (verbose) {
         grunt.verbose.writeln('url [' + url + ']');
@@ -63,42 +64,24 @@ module.exports = function(grunt) {
           if (verbose) {
             grunt.verbose.writeln('body \n\n' + JSON.stringify(body, null, 2));
           }
-          runner.parse(body, function(results) {
-            if (verbose) {
-              grunt.verbose.writeln('results \n\n' + JSON.stringify(results, null, 2));
-            }
-            if (results.errorCount !== 0) {
-              errorMessage += 'Error count [' + results.errorCount + ']\n';
-              _.each(results.files, function(file) {
-                if (file.error !== undefined) {
-                  errorMessage += 'File ['+file.src+']\n';
-                  errorMessage += 'Message ['+file.error+']\n';
-                }
-              });
-            }
-            if (results.errorCount !== 0 || results.warnCount !== 0) {
-              warningMessage += 'Warning count [' + results.warnCount + ']\n';
-              _.each(results.files, function(file) {
-                warningMessage += 'File ['+file.src+']\n';
-                _.each(file.rules, function(rule) {
-                  if (rule.level === 'error') {
-                    errorMessage += 'Rule ['+rule.name+']\n';
-                    _.each(rule.sources, function(source){
-                      errorMessage += 'Source ['+source+']\n';
-                    });
-                  }
-                  if (rule.level === 'warn') {
-                    warningMessage += 'Rule ['+rule.name+']\n';
-                    _.each(rule.sources, function(source){
-                      warningMessage += 'Source ['+source+']\n';
-                    });
-                  }
-                });
-              });
-            }
+          runner.lint(body, function(results){
             errorCount += results.errorCount;
-            warningCount += results.warnCount;
+            warningCount += results.warningCount;
             successCount += results.successCount;
+            _.each(results.errorMessages, function(error) {
+              errorMessage += 'File ['+error.file+']\n';
+              errorMessage += 'Message ['+error.message+']\n';
+              _.each(error.sources, function(source) {
+                errorMessage += 'Source ['+source+']\n';
+              });
+            });
+            _.each(results.warningMessages, function(warning) {
+              warningMessage += 'File ['+warning.file+']\n';
+              warningMessage += 'Message ['+warning.message+']\n';
+              _.each(warning.sources, function(source) {
+                warningMessage += 'Source ['+source+']\n';
+              });
+            });
           });
         } else {
           if (verbose) {
@@ -117,10 +100,10 @@ module.exports = function(grunt) {
         if (verbose) {
           grunt.verbose.writeln('DONE');
         }
-        if (warningMessage !== '') {
+        if (warningCount > 0) {
           grunt.fail.warn(warningMessage);
         }
-        if (errorMessage !== '') {
+        if (errorCount > 0) {
           grunt.fail.fatal(errorMessage);
         }
         grunt.log.writeln('Total success [' + successCount + '] - warning [' + warningCount + '] - error [' + errorCount + ']');

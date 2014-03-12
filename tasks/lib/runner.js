@@ -12,9 +12,9 @@ var _ = require('lodash');
 var url = require('url');
 
 function Runner(grunt, options) {
-  Runner.options = options;
-  Runner.grunt = grunt;
-}
+  this.options = options;
+  this.grunt = grunt;
+};
 
 Runner.prototype.options = {};
 
@@ -53,18 +53,19 @@ Runner.prototype.getUrl = function(urlBase, dir) {
   tempUrl.pathname = 'lint';
   tempUrl.query = { 'dir': dir, 'format': 'json' };
   return url.format(tempUrl);
-}
+};
 
-Runner.prototype.parse = function(lints, done) {
+Runner.prototype.parse = function(lints, callback) {
+  var _this = this;
   var results = {
     files: []
   }, errorCount = 0, warnCount = 0, successCount = 0;
   _.each(lints.lints.lint, function(lint) {
     if (lint.src === undefined) {
-      Runner.grunt.fail.fatal('Missing src attribute. Invalid format.');
-      Runner.grunt.log.debug(lint);
+      _this.grunt.fail.fatal('Missing src attribute. Invalid format.');
+      _this.grunt.log.debug(lint);
     }
-    Runner.grunt.verbose.debug(JSON.stringify(lint, null, 2));
+    _this.grunt.verbose.debug(JSON.stringify(lint, null, 2));
     var _file = {
       src: lint.src,
       rules: []
@@ -98,7 +99,39 @@ Runner.prototype.parse = function(lints, done) {
   results.errorCount = errorCount;
   results.warnCount = warnCount;
   results.successCount = successCount;
-  done(results);
+  callback(results);
 };
+
+Runner.prototype.lint = function(data, callback) {
+  var _this = this;
+  this.parse(data, function(results) {
+    var report = {
+      errorMessages: [],
+      warningMessages: []
+    };
+    if (_this.options.verbose) {
+      _this.grunt.verbose.writeln('results \n\n' + JSON.stringify(results, null, 2));
+    }
+    if (results.errorCount !== 0 || results.warnCount !== 0) {
+      _.each(results.files, function(file) {
+        if (file.error !== undefined) {
+          report.errorMessages.push({file: file.src, message: file.error});
+        }
+        _.each(file.rules, function(rule) {
+          if (rule.level === 'error') {
+            report.warningMessages.push({file: file.src, message: rule.name, sources: rule.sources});
+          }
+          if (rule.level === 'warn') {
+            report.warningMessages.push({file: file.src, message: rule.name, sources: rule.sources});
+          }
+        });
+      });
+    }
+    report.errorCount = results.errorCount;
+    report.warningCount = results.warnCount;
+    report.successCount = results.successCount;
+    callback(report);
+  });
+};          
 
 module.exports = Runner;
