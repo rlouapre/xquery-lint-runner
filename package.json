@@ -1,7 +1,7 @@
 {
   "name": "grunt-xquery-lint-runner",
   "description": "Grunt plugin for XQuery Lint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/rlouapre/xquery-lint-runner",
   "author": {
     "name": "Richard Louapre",
