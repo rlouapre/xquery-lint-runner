@@ -1,0 +1,13 @@
+{
+  "lints": {
+    "lint": [
+      {
+        "src": "C:\\Users\\rlouapre\\Projects\\ml\\marklogic_amc-git\\src\\app\\lib\\test\\plugins\\test-plugin-1.xqy"
+      },
+      {
+        "src":"C:\\Users\\rlouapre\\Projects\\ml\\marklogic_amc-git\\src\\app\\lib\\test\\plugins\\test-plugin-2.xqy", 
+        "error":"syntax error, found 'declare'\nwhile expecting EOF\nafter successfully scanning 7 characters at line 13, column 1\n...declare private function get-hel..."
+      }
+    ]
+  }
+}

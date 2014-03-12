@@ -1,0 +1,13 @@
+{
+	"lints": {
+		"lint": [{
+			"src": "C:\\Users\\rlouapre\\Projects\\ml\\marklogic_amc-git\\src\\app\\lib\\elapsed-time-lib.xqy",
+			"rule": [{
+				"name": "declare function return type",
+				"level": "warn",
+				"occurrences": "1",
+				"source": ["function elapsedtime:get-time() {\n  $elapsed-time-array\n}"]
+			}]
+		}]
+	}
+}

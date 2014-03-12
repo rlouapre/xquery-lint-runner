@@ -1,0 +1,48 @@
+{
+  "name": "grunt-xquery-lint-runner",
+  "description": "Grunt plugin for XQuery Lint",
+  "version": "0.1.0",
+  "homepage": "https://github.com/rlouapre/xquery-lint-runner",
+  "author": {
+    "name": "Richard Louapre",
+    "email": "richard.louapre@marklogic.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rlouapre/xquery-lint-runner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rlouapre/xquery-lint-runner/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/rlouapre/xquery-lint-runner/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt": "~0.4.3",
+    "chai": "^1.9.0",
+    "grunt-mocha-test": "^0.9.4"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.3"
+  },
+  "keywords": [
+    "gruntplugin"
+  ],
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "request": "^2.34.0",
+    "async": "^0.2.10"
+  }
+}
